@@ -1,0 +1,34 @@
+# Environment for cjm-media-plugin-demucs
+# Provides Demucs v4 source separation with PyTorch CUDA support
+name: cjm-media-plugin-demucs
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  # Python version
+  - python=3.12
+
+  # System dependencies (conda-managed for proper linking)
+  - ffmpeg
+
+  # Pip dependencies
+  - pip
+  - pip:
+    # PyTorch with CUDA
+    - torch
+
+    # Core plugin infrastructure
+    - cjm-plugin-system
+    - cjm-media-plugin-system
+
+    # Demucs fork (inference-only, TorchCodec)
+    - cjm-demucs-v4
+
+    # Utilities
+    - fastcore
+
+    # Worker dependencies
+    - fastapi
+    - uvicorn
+    - psutil
+    - httpx
