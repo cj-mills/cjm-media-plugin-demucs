@@ -108,6 +108,10 @@ async def test_separate_vocals_via_queue(manager: PluginManager):
     try:
         _reload_plugin(manager)
 
+        if "--debug" in sys.argv:
+            proxy = manager.plugins.get(PLUGIN_NAME)
+            await asyncio.sleep(10)
+
         queue = JobQueue(manager)
         await queue.start()
 
