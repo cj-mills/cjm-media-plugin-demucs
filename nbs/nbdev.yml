@@ -1,0 +1,9 @@
+project:
+  output-dir: _docs
+
+website:
+  title: "cjm-media-plugin-demucs"
+  site-url: "https://cj-mills.github.io/cjm-media-plugin-demucs"
+  description: "Demucs v4 audio source separation plugin for the cjm-plugin-system that provides vocals extraction for removing background noise and music from speech audio."
+  repo-branch: main
+  repo-url: "https://github.com/cj-mills/cjm-media-plugin-demucs"
