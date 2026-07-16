@@ -12,7 +12,6 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, ClassVar, Dict, List, Optional, Union
 
-import torch
 from cjm_capability_primitives.source_separation import SourceSeparationResult
 from cjm_substrate.core.capability import EnvVarSpec, RELOAD_TRIGGER, ToolCapability
 from cjm_substrate.core.errors import CapabilityInputError
@@ -21,7 +20,7 @@ from cjm_substrate.utils.validation import (config_to_dict, dataclass_to_jsonsch
                                             SCHEMA_TITLE)
 from cjm_substrate_torch_utils.device import resolve_torch_device
 from cjm_substrate_torch_utils.memory import release_model
-from cjm_substrate_torch_utils.oom import cuda_oom_to_capability_resource_error
+from cjm_substrate_torch_utils.oom import cuda_oom_to_capability_resource_error, is_cuda_oom
 
 
 @dataclass
@@ -271,7 +270,11 @@ class DemucsProcessingCapability(ToolCapability):
         self.report_progress(0.1, "Separating audio...")
         try:
             origin, separated = self._separator.separate_audio_file(input_p)
-        except torch.cuda.OutOfMemoryError as e:
+        except Exception as e:
+            # is_cuda_oom: caching-allocator subclass OR driver-level RuntimeError OOM;
+            # non-OOM errors propagate unchanged for the substrate's classifier.
+            if not is_cuda_oom(e):
+                raise
             raise cuda_oom_to_capability_resource_error(
                 e, label=f"during Demucs separation (model={self.config.model!r})",
             ) from e
